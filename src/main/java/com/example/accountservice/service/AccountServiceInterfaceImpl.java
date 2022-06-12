@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
+import java.util.Random;
 
 /**
  * @author m-sabbaghi
@@ -42,9 +43,10 @@ public class AccountServiceInterfaceImpl implements AccountServiceInterface {
         if (customerOptional.isPresent()) {
             Customer customer = customerOptional.get();
             Account account = new Account(customer);
+            account.setAccountNumber(new Random().nextInt(99999999));
             if (initCredit > 0) {
                 TransactionHistory transactionHistory = new TransactionHistory(initCredit);
-                transactionHistory.setReferenceNo(System.currentTimeMillis() / 1000);
+                transactionHistory.setTrackNo(System.currentTimeMillis() / 1000);
                 account.addTransaction(transactionHistory);
             } else {
                 account.setBalance(initCredit);

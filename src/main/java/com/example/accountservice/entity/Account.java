@@ -32,9 +32,15 @@ public class Account implements Serializable {
     @Column(name = "CREATED_TIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTime;
+
+    @NotNull
+    @Column(name = "account_number", nullable = false)
+    private long accountNumber;
+
     @NotNull
     @Column(name = "balance", nullable = false)
     private long balance;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TransactionHistory> transactionHistories = new HashSet<>();
 
@@ -54,12 +60,7 @@ public class Account implements Serializable {
     public void addTransaction(TransactionHistory transaction) {
         transactionHistories.add(transaction);
         balance = balance + transaction.getAmount();
-        transaction.setNewBalance(balance);
         transaction.setAccount(this);
     }
 
-    public void removeTransaction(TransactionHistory transaction) {
-        transactionHistories.remove(transaction);
-        transaction.setAccount(null);
-    }
 }

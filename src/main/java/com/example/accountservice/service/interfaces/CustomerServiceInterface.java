@@ -1,9 +1,9 @@
 package com.example.accountservice.service.interfaces;
 
 import com.example.accountservice.dto.CustomerDto;
-import com.example.accountservice.exception.CustomerNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * @author m-sabbaghi
@@ -12,9 +12,9 @@ import org.springframework.data.domain.Pageable;
  */
 public interface CustomerServiceInterface {
 
-    CustomerDto findById(Long id) throws CustomerNotFoundException;
+    CustomerDto findById(Long id) throws ResponseStatusException;
 
     CustomerDto save(CustomerDto customerDto);
 
-    Page<CustomerDto> findAll(Pageable pageable);
+    Page<CustomerDto> findAll(Pageable pageable) throws ResponseStatusException;
 }

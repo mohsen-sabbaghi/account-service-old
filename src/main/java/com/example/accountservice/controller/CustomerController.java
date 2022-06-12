@@ -1,18 +1,23 @@
 package com.example.accountservice.controller;
 
 import com.example.accountservice.dto.CustomerDto;
-import com.example.accountservice.exception.CustomerNotFoundException;
 import com.example.accountservice.service.interfaces.CustomerServiceInterface;
 import com.example.accountservice.util.PaginationUtil;
+import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
@@ -24,27 +29,45 @@ import java.util.List;
 @RestController
 @RequestMapping("/v1")
 @Slf4j
-public class CustomerController implements CustomerInterface {
+public class CustomerController {
+
     private final CustomerServiceInterface customerServiceInterface;
+    @Value("${server.port}")
+    private int serverPort;
 
     public CustomerController(CustomerServiceInterface customerServiceInterface) {
         this.customerServiceInterface = customerServiceInterface;
     }
 
-    @Override
-    public ResponseEntity<List<CustomerDto>> getCustomersList(Pageable pageable) {
+    @GetMapping("/customers")
+    public ResponseEntity<List<CustomerDto>> getCustomersList(Pageable pageable) throws ResponseStatusException {
         Page<CustomerDto> page = customerServiceInterface.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        try {
+            return ResponseEntity.ok().headers(headers).body(page.getContent());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No customers ");
+        }
     }
 
-    @Override
-    public ResponseEntity<CustomerDto> getCustomerById(long customerId) throws CustomerNotFoundException {
-        return ResponseEntity.ok().body(customerServiceInterface.findById(customerId));
+    @RequestMapping("/customers/{customer-id}")
+    public ResponseEntity<CustomerDto> getCustomerById(@PathVariable("customer-id") long customerId) throws ResponseStatusException {
+        try {
+            return ResponseEntity.ok().body(customerServiceInterface.findById(customerId));
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No customer found with ID=" + customerId);
+        }
     }
 
-    @Override
-    public ResponseEntity<CustomerDto> createCustomer(CustomerDto customerDto) throws URISyntaxException {
-        return null;
+    @PostMapping(value = "/customers", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CustomerDto> createCustomer(@Valid @RequestBody CustomerDto customerDto) throws ResponseStatusException, URISyntaxException {
+        if (customerDto == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Empty Request Body!");
+        String jsonBody = new Gson().toJson(customerDto, CustomerDto.class);
+        log.debug("New customer to save : {}", jsonBody);
+        if (customerDto.getId() != null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID will generate by System");
+        }
+        CustomerDto result = customerServiceInterface.save(customerDto);
+        return ResponseEntity.created(new URI("http://localhost:" + serverPort + "/v1/customers/" + result.getId())).body(result);
     }
 }

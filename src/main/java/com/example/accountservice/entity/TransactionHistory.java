@@ -31,12 +31,14 @@ public class TransactionHistory implements Serializable {
     @Column(name = "CREATE_TIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTime;
+
     @NotNull
     @Column(name = "amount", nullable = false)
     private long amount;
 
-    @Column(name = "reference_no")
-    private Long referenceNo;
+    @Column(name = "track_no")
+    private Long trackNo;
+
     @ManyToOne
     @JoinColumn(name = "fk_account")
     private Account account;

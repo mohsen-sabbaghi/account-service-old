@@ -2,7 +2,6 @@ package com.example.accountservice.service;
 
 import com.example.accountservice.dto.CustomerDto;
 import com.example.accountservice.entity.Customer;
-import com.example.accountservice.exception.CustomerNotFoundException;
 import com.example.accountservice.repository.CustomerRepository;
 import com.example.accountservice.service.interfaces.CustomerServiceInterface;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +31,7 @@ public class CustomerServiceInterfaceImpl implements CustomerServiceInterface {
     }
 
     @Override
-    public CustomerDto findById(Long id) throws CustomerNotFoundException {
+    public CustomerDto findById(Long id) throws ResponseStatusException {
         Optional<Customer> customer = customerRepository.findById(id);
         return customer.map(c -> new ModelMapper().map(c, CustomerDto.class))
                 .orElseThrow(
@@ -42,7 +41,9 @@ public class CustomerServiceInterfaceImpl implements CustomerServiceInterface {
 
     @Override
     public CustomerDto save(CustomerDto customerDto) {
-        return null;
+        Customer customer = new ModelMapper().map(customerDto, Customer.class);
+        customer = customerRepository.save(customer);
+        return new ModelMapper().map(customer, CustomerDto.class);
     }
 
     @Override

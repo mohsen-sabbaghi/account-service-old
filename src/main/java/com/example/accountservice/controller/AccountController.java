@@ -29,10 +29,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequestMapping("/v1")
 @Slf4j
 public class AccountController {
+    private static final Map<String, String> idempotenceCache = new ConcurrentHashMap<>();
     private final AccountServiceInterface accountServiceInterface;
-
-    private static Map<String,String> idempotenceCache=new ConcurrentHashMap<>();
-
     @Value("${server.port}")
     private int serverPort;
 
@@ -41,16 +39,17 @@ public class AccountController {
     }
 
     @PostMapping("/customers/{customer-id}/accounts")
-    public ResponseEntity<AccountDto> createAccount(@PathVariable("customer-id") long customerId,
-                                                    @RequestHeader("Initial-Credit") long initCredit,
-                                                    @RequestHeader(value = "X-Request-Id", defaultValue = "123456") String requestId)
+    public ResponseEntity<AccountDto> createAccount(
+            @PathVariable("customer-id") long customerId,
+            @RequestHeader("Initial-Credit") long initCredit,
+            @RequestHeader(value = "Track-Id", defaultValue = "123") String trackId)
             throws ResponseStatusException {
         if (initCredit < 0)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Initial Credit Must be grater than 0");
-        if (idempotenceCache.containsKey(requestId))
+        if (idempotenceCache.containsValue(trackId))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Duplicated Request");
+        idempotenceCache.put(String.valueOf(customerId),trackId);
         AccountDto accountDto = accountServiceInterface.createAccount(customerId, initCredit);
-        idempotenceCache.put(requestId, String.valueOf(accountDto.getId()));
         URI location = URI.create("http://localhost:" + serverPort + "/v1/accounts/" + accountDto.getId());
         return ResponseEntity.created(location).body(accountDto);
     }
@@ -60,14 +59,19 @@ public class AccountController {
         try {
             return ResponseEntity.ok().body(accountServiceInterface.findById(id));
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cant find account with ID= "+id, e);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cant find account with ID= " + id, e.getCause());
         }
     }
 
     @GetMapping("/accounts")
-    public ResponseEntity<List<AccountDto>> getAccountList(Pageable pageable) {
-        Page<AccountDto> page = accountServiceInterface.findAll(pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    public ResponseEntity<List<AccountDto>> getAccountList(Pageable pageable) throws ResponseStatusException {
+        try {
+            Page<AccountDto> page = accountServiceInterface.findAll(pageable);
+            HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+            return ResponseEntity.ok().headers(headers).body(page.getContent());
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No accounts", e.getCause());
+        }
+
     }
 }

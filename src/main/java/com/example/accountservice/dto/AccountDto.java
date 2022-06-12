@@ -1,5 +1,6 @@
 package com.example.accountservice.dto;
 
+import com.example.accountservice.entity.Customer;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -24,6 +25,9 @@ public class AccountDto {
 
     @JsonProperty("created_time")
     private Date createdTime;
+
+    @NotNull(message = "can not be null")
+    private Long accountNumber;
 
     @NotNull(message = "can not be null")
     private Long balance;

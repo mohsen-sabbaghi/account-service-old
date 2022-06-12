@@ -44,6 +44,7 @@ public class Customer implements Serializable {
     @Size(min = 2, max = 50)
     @Column(name = "surname", length = 50)
     private String surname;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private Set<Account> accounts = new HashSet<>();
