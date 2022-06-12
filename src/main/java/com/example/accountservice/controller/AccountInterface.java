@@ -1,13 +1,11 @@
 package com.example.accountservice.controller;
 
 import com.example.accountservice.dto.AccountDto;
-import com.example.accountservice.exception.AccountNotFoundException;
-import com.example.accountservice.exception.CustomerNotFoundException;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.data.domain.Pageable;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -18,13 +16,13 @@ import java.util.List;
  */
 public interface AccountInterface {
 
-    ResponseEntity<AccountDto> openAccountForExistingCustomer(
+    ResponseEntity<AccountDto> createAccount(
             @PathVariable("customer-id") long customerId,
-            @RequestHeader("Initial-Credit") long initialCredit,
-            @RequestHeader(value = "X-Request-Id" ,defaultValue = "MOCKREQUESTID") String requestId
-    ) throws CustomerNotFoundException;
+            @RequestHeader("Initial-Credit") long initCredit,
+            @RequestHeader(value = "X-Request-Id", defaultValue = "123456") String requestId
+    ) throws ResponseStatusException;
 
-    ResponseEntity<AccountDto> getAccount(@PathVariable("account-id") Long id) throws AccountNotFoundException;
+    ResponseEntity<AccountDto> getAccount(@PathVariable("account-id") Long id) throws ResponseStatusException;
 
     ResponseEntity<List<AccountDto>> getAccountList(Pageable pageable);
 }

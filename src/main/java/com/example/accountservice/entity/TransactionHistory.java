@@ -22,22 +22,18 @@ import java.util.Date;
 @NoArgsConstructor
 @Getter
 @Setter
-public class AccountTransaction implements Serializable {
+public class TransactionHistory implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "CREATE_AT")
+    @Column(name = "CREATE_TIME")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+    private Date createdTime;
     @NotNull
     @Column(name = "amount", nullable = false)
     private long amount;
-
-    @NotNull
-    @Column(name = "new_balance", nullable = false)
-    private long newBalance;
 
     @Column(name = "reference_no")
     private Long referenceNo;
@@ -45,12 +41,12 @@ public class AccountTransaction implements Serializable {
     @JoinColumn(name = "fk_account")
     private Account account;
 
-    public AccountTransaction(long amount) {
+    public TransactionHistory(long amount) {
         this.amount = amount;
     }
 
     @PrePersist
     public void prePersist() {
-        setCreatedAt(new Date());
+        setCreatedTime(new Date());
     }
 }

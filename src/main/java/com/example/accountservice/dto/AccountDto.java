@@ -22,8 +22,8 @@ public class AccountDto {
 
     private Long id;
 
-    @JsonProperty("created_at")
-    private Date createdAt;
+    @JsonProperty("created_time")
+    private Date createdTime;
 
     @NotNull(message = "can not be null")
     private Long balance;

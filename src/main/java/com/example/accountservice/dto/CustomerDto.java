@@ -25,11 +25,11 @@ public class CustomerDto {
 
     private Long id;
 
-    @JsonProperty("created_at")
-    private Date createdAt;
+    @JsonProperty("created_time")
+    private Date createdTime;
 
     @NotNull(message = "Name can not be null")
-    @Size(message = "name must be between 2 and 60 characters", min = 2, max = 50)
+    @Size(message = "name must be between 2 and 50 characters", min = 2, max = 50)
     private String name;
 
     @NotNull(message = "Surname can not be null")

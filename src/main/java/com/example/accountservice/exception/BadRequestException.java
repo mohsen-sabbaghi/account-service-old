@@ -8,25 +8,25 @@
 // * <a href="https://www.linkedin.com/in/sabbaghi/">...</a>
 // * @version 6/7/2022
 // */
-//@ResponseStatus(value = HttpStatus.NOT_FOUND)
-//public class AccountNotFoundException extends RuntimeException {
-//    public AccountNotFoundException() {
+//@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+//public class BadRequestException extends RuntimeException {
+//    public BadRequestException() {
 //        super();
 //    }
 //
-//    public AccountNotFoundException(String message) {
+//    public BadRequestException(String message) {
 //        super(message);
 //    }
 //
-//    public AccountNotFoundException(String message, Throwable cause) {
+//    public BadRequestException(String message, Throwable cause) {
 //        super(message, cause);
 //    }
 //
-//    public AccountNotFoundException(Throwable cause) {
+//    public BadRequestException(Throwable cause) {
 //        super(cause);
 //    }
 //
-//    protected AccountNotFoundException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+//    protected BadRequestException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
 //        super(message, cause, enableSuppression, writableStackTrace);
 //    }
 //}

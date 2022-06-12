@@ -29,14 +29,15 @@ public class Account implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "CREATE_AT")
+    @Column(name = "CREATED_TIME")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+    private Date createdTime;
     @NotNull
     @Column(name = "balance", nullable = false)
     private long balance;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<AccountTransaction> accountTransactions = new HashSet<>();
+    private Set<TransactionHistory> transactionHistories = new HashSet<>();
+
     @ManyToOne
     @JoinColumn(name = "fk_customer")
     private Customer customer;
@@ -47,18 +48,18 @@ public class Account implements Serializable {
 
     @PrePersist
     public void prePersist() {
-        setCreatedAt(new Date());
+        setCreatedTime(new Date());
     }
 
-    public void addTransaction(AccountTransaction transaction) {
-        accountTransactions.add(transaction);
+    public void addTransaction(TransactionHistory transaction) {
+        transactionHistories.add(transaction);
         balance = balance + transaction.getAmount();
         transaction.setNewBalance(balance);
         transaction.setAccount(this);
     }
 
-    public void removeTransaction(AccountTransaction transaction) {
-        accountTransactions.remove(transaction);
+    public void removeTransaction(TransactionHistory transaction) {
+        transactionHistories.remove(transaction);
         transaction.setAccount(null);
     }
 }

@@ -1,6 +1,6 @@
 package com.example.accountservice.service.interfaces;
 
-import com.example.accountservice.dto.AccountDto;
+import com.example.accountservice.dto.CustomerDto;
 import com.example.accountservice.exception.CustomerNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,13 +8,13 @@ import org.springframework.data.domain.Pageable;
 /**
  * @author m-sabbaghi
  * <a href="https://www.linkedin.com/in/sabbaghi/">...</a>
- * @version 6/7/2022
+ * @version 6/11/2022
  */
-public interface AccountService {
+public interface CustomerServiceInterface {
 
-    AccountDto openAccountForExistingCustomer(long customerId, long initialCredit) throws CustomerNotFoundException;
+    CustomerDto findById(Long id) throws CustomerNotFoundException;
 
-    AccountDto findOne(Long id);
+    CustomerDto save(CustomerDto customerDto);
 
-    Page<AccountDto> findAll(Pageable pageable);
+    Page<CustomerDto> findAll(Pageable pageable);
 }

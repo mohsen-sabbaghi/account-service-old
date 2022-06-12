@@ -1,6 +1,9 @@
 package com.example.accountservice.entity;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
@@ -30,16 +33,16 @@ public class Customer implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "CREATE_AT")
+    @Column(name = "CREATE_TIME")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+    private Date createdTime;
 
-    @Size(min = 2, max = 60)
-    @Column(name = "name", length = 60)
+    @Size(min = 2, max = 50)
+    @Column(name = "name", length = 50)
     private String name;
 
-    @Size(min = 2, max = 60)
-    @Column(name = "surname", length = 60)
+    @Size(min = 2, max = 50)
+    @Column(name = "surname", length = 50)
     private String surname;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
@@ -47,17 +50,12 @@ public class Customer implements Serializable {
 
     @PrePersist
     public void prePersist() {
-        setCreatedAt(new Date());
+        setCreatedTime(new Date());
     }
 
     public void addAccount(Account account) {
         accounts.add(account);
         account.setCustomer(this);
-    }
-
-    public void removeAccount(Account account) {
-        accounts.remove(account);
-        account.setCustomer(null);
     }
 
     @Override

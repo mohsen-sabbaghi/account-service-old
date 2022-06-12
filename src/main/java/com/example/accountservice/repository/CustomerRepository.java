@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * <a href="https://www.linkedin.com/in/sabbaghi/">...</a>
  * @version 6/8/2022
  */
-public interface CustomerRepository extends JpaRepository<Customer,Long> {
+public interface CustomerRepository extends JpaRepository<Customer, Long> {
 }

@@ -1,14 +1,12 @@
 package com.example.accountservice.bootstrap;
 
 import com.example.accountservice.entity.Account;
-import com.example.accountservice.entity.AccountTransaction;
 import com.example.accountservice.entity.Customer;
+import com.example.accountservice.entity.TransactionHistory;
 import com.example.accountservice.repository.CustomerRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
-
-import java.time.Instant;
 
 /**
  * @author m-sabbaghi
@@ -28,19 +26,19 @@ public class MockedData implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        AccountTransaction accountTransaction = new AccountTransaction(1);
-        accountTransaction.setReferenceNo(Instant.now().toEpochMilli() / 1000);
+        TransactionHistory transactionHistory = new TransactionHistory(1);
+        transactionHistory.setReferenceNo(System.currentTimeMillis() / 1000);
         Account account = new Account();
-        account.addTransaction(accountTransaction);
+        account.addTransaction(transactionHistory);
 
-        AccountTransaction accountTransaction2 = new AccountTransaction(-1);
-        accountTransaction2.setReferenceNo(Instant.now().toEpochMilli() / 1000 + 1);
-        account.addTransaction(accountTransaction2);
+        TransactionHistory transactionHistory2 = new TransactionHistory(-1);
+        transactionHistory2.setReferenceNo(System.currentTimeMillis() / 1000 + 1);
+        account.addTransaction(transactionHistory2);
 
-        AccountTransaction accountTransaction3 = new AccountTransaction(3);
-        accountTransaction.setReferenceNo(Instant.now().toEpochMilli() / 1000);
+        TransactionHistory transactionHistory3 = new TransactionHistory(3);
+        transactionHistory.setReferenceNo(System.currentTimeMillis() / 1000);
         Account account2 = new Account();
-        account2.addTransaction(accountTransaction3);
+        account2.addTransaction(transactionHistory3);
 
         Customer customer = new Customer();
         customer.setName("Mohsen");
@@ -52,8 +50,8 @@ public class MockedData implements CommandLineRunner {
         log.debug("#customer1 : {}", customer);
 
         Customer customerPaul = new Customer();
-        customerPaul.setName("Peter");
-        customerPaul.setSurname("Paul");
+        customerPaul.setName("customerName");
+        customerPaul.setSurname("customerFamily");
         customerRepository.save(customerPaul);
         log.debug("#customer2 : {}", customerPaul);
     }
