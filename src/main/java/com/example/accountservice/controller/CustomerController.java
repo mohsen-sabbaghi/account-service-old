@@ -12,6 +12,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -26,7 +28,7 @@ import java.util.List;
  * <a href="https://www.linkedin.com/in/sabbaghi/">...</a>
  * @version 6/11/2022
  */
-@RestController
+@Controller
 @RequestMapping("/v1")
 @Slf4j
 public class CustomerController {
@@ -40,6 +42,7 @@ public class CustomerController {
     }
 
     @GetMapping("/customers")
+    @ResponseBody
     public ResponseEntity<List<CustomerDto>> getCustomersList(Pageable pageable) throws ResponseStatusException {
         Page<CustomerDto> page = customerServiceInterface.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
@@ -51,6 +54,7 @@ public class CustomerController {
     }
 
     @RequestMapping("/customers/{customer-id}")
+    @ResponseBody
     public ResponseEntity<CustomerDto> getCustomerById(@PathVariable("customer-id") long customerId) throws ResponseStatusException {
         try {
             return ResponseEntity.ok().body(customerServiceInterface.findById(customerId));
@@ -60,6 +64,7 @@ public class CustomerController {
     }
 
     @PostMapping(value = "/customers", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
     public ResponseEntity<CustomerDto> createCustomer(@Valid @RequestBody CustomerDto customerDto) throws ResponseStatusException, URISyntaxException {
         if (customerDto == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Empty Request Body!");
         String jsonBody = new Gson().toJson(customerDto, CustomerDto.class);
@@ -70,4 +75,22 @@ public class CustomerController {
         CustomerDto result = customerServiceInterface.save(customerDto);
         return ResponseEntity.created(new URI("http://localhost:" + serverPort + "/v1/customers/" + result.getId())).body(result);
     }
+
+    @RequestMapping("/ui/customers")
+    public String getCustomerList(Model model,Pageable pageable){
+        log.debug("#Web request for get customer");
+        Page<CustomerDto> customerDtoList = customerServiceInterface.findAll(pageable);
+        System.err.println("customerDtoList.toList() "+customerDtoList.toList());
+        model.addAttribute("customerList",customerDtoList.toList());
+//        model.addAttribute("accounts",customerDtoList.get().getAccounts());
+        return "customer/list";
+    }
+//    @RequestMapping("/ui/customers/{customer-id}")
+//    public String getCustomer(Model model, @PathVariable("customer-id") Long customerId){
+//        log.debug("#Web request for get customer with id: "+customerId);
+//        CustomerDto customerDto= customerServiceInterface.findById(customerId);
+//        model.addAttribute("customer",customerDto);
+//        model.addAttribute("accounts",customerDto.getAccounts());
+//        return "customer/list2";
+//    }
 }

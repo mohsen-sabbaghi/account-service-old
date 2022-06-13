@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to the Account-Service home page.</title>
+</head>
+<body>
+<th:h2>Welcome to the Account-Service home page</th:h2>
+<hr>
+<div class="container">
+    <h1>Customer: </h1>
+    <p th:text="${customerList}">list...</p>
+    <p th:each="customer : ${customerList}">
+        <span>
+            Customer.ID: [(${customer.id})] ;
+            Customer Name: [(${customer.name})] ;
+            Customer SurName: [(${customer.surname})] ;
+            Customer Accounts:[(${customer.accounts})] ;
+            <br>
+            <span th:each="accounts : ${customer.accounts}">
+                <b>Account ID:</b> [(${accounts.id})] ;
+                <b>Account Created Time:</b> [(${accounts.createdTime})] ;
+                <b>Account Number:</b> [(${accounts.accountNumber})] ;
+                <b>Account Balance:</b>[(${accounts.balance})] ;
+            </span>
+        </span>
+    </p>
+
+
+</div>
+</body>
+</html>
