@@ -2,17 +2,14 @@ package com.example.accountservice.controller;
 
 import com.example.accountservice.dto.AccountDto;
 import com.example.accountservice.service.interfaces.AccountServiceInterface;
-import com.example.accountservice.util.PaginationUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
@@ -67,8 +64,7 @@ public class AccountController {
     public ResponseEntity<List<AccountDto>> getAccountList(Pageable pageable) throws ResponseStatusException {
         try {
             Page<AccountDto> page = accountServiceInterface.findAll(pageable);
-            HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-            return ResponseEntity.ok().headers(headers).body(page.getContent());
+            return ResponseEntity.ok().body(page.getContent());
         } catch (ResponseStatusException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No accounts", e.getCause());
         }

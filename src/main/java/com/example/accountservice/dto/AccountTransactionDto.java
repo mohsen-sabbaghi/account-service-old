@@ -3,7 +3,6 @@ package com.example.accountservice.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import lombok.ToString;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;
@@ -15,7 +14,6 @@ import java.util.Date;
  */
 
 @Data
-@ToString(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AccountTransactionDto {
 

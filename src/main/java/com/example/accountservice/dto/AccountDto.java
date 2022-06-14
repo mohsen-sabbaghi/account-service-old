@@ -4,7 +4,6 @@ import com.example.accountservice.entity.Customer;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;
@@ -17,7 +16,6 @@ import java.util.Set;
  */
 
 @Data
-@EqualsAndHashCode(callSuper = false)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AccountDto {
 
