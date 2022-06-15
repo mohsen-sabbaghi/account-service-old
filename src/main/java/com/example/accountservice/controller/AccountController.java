@@ -1,6 +1,7 @@
 package com.example.accountservice.controller;
 
 import com.example.accountservice.dto.AccountDto;
+import com.example.accountservice.interceptor.PreventDuplication;
 import com.example.accountservice.service.interfaces.AccountServiceInterface;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,8 +14,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author m-sabbaghi
@@ -26,7 +25,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequestMapping("/v1")
 @Slf4j
 public class AccountController {
-    private static final Map<String, String> idempotenceCache = new ConcurrentHashMap<>();
     private final AccountServiceInterface accountServiceInterface;
     @Value("${server.port}")
     private int serverPort;
@@ -36,16 +34,14 @@ public class AccountController {
     }
 
     @PostMapping("/customers/{customer-id}/accounts")
+    @PreventDuplication
     public ResponseEntity<AccountDto> createAccount(
             @PathVariable("customer-id") long customerId,
             @RequestHeader("Initial-Credit") long initCredit,
-            @RequestHeader(value = "Track-Id", defaultValue = "123") String trackId)
+            @RequestHeader(value = "Track-Id") String trackId)
             throws ResponseStatusException {
         if (initCredit < 0)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Initial Credit Must be grater than 0");
-        if (idempotenceCache.containsValue(trackId))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Duplicated Request");
-        idempotenceCache.put(String.valueOf(customerId),trackId);
         AccountDto accountDto = accountServiceInterface.createAccount(customerId, initCredit);
         URI location = URI.create("http://localhost:" + serverPort + "/v1/accounts/" + accountDto.getId());
         return ResponseEntity.created(location).body(accountDto);

@@ -6,11 +6,14 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author m-sabbaghi
@@ -22,18 +25,31 @@ import java.lang.reflect.Method;
 @Order(1)
 @Slf4j
 public class DuplicationInterceptor {
-    private final HttpServletRequest httpServletRequest;
-    private final HttpServletResponse httpServletResponse;
 
-    public DuplicationInterceptor(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+    //it Must be static in order to retain the thread safety
+    private static final Map<String, String> idempotenceCache = new ConcurrentHashMap<>();
+
+    private final HttpServletRequest httpServletRequest;
+
+    public DuplicationInterceptor(HttpServletRequest httpServletRequest) {
         this.httpServletRequest = httpServletRequest;
-        this.httpServletResponse = httpServletResponse;
     }
 
     @Around(value = "@annotation(com.example.accountservice.interceptor.PreventDuplication)")
-    public Object duplicationHandler(ProceedingJoinPoint joinPoint) {
-        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
-        Method methodAnnotated = methodSignature.getMethod();
-        return null;
+    public Object duplicationHandler(ProceedingJoinPoint pjp) throws Throwable {
+        //get the annotation parameter name
+        String annotationParamName = ((MethodSignature) pjp.getSignature()).getMethod().getAnnotation(PreventDuplication.class).parameterName();
+
+        String trackId = httpServletRequest.getHeader(annotationParamName);
+
+        if (trackId != null) {
+            Map pathVariables = (Map) httpServletRequest.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+            String customerId = String.valueOf(pathVariables.get("customer-id"));
+
+            if ("".equalsIgnoreCase(trackId) || idempotenceCache.containsValue(trackId))
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Duplicated Request, check your Track-Id at header params");
+            idempotenceCache.put(customerId, trackId);
+        }
+        return pjp.proceed();
     }
 }
