@@ -15,8 +15,9 @@ body {
     -ms-hyphens: none;
     hyphens: none;
     text-transform: uppercase;
-    font-size: 50px;
-    margin: 20px  0;
+    font-size: 30px;
+    margin: 0 0 10px 0;
+    pading: 20px 0;
 }
 
 #gradient {
@@ -33,22 +34,24 @@ body {
 }
 
 .icon {
-    width: 30px;
-    height: 30px;
-    background: #2642EA;
+    color:#ffffff ;
+    background: transparent;
     display: inline-block;
     vertical-align: middle;
 }
 
 span {
     font-family: 'Open Sans', sans-serif;
-    color: #3c3c3c;
+    color: #ffffff;
     font-weight: 600;
     vertical-align: middle;
-    padding-left: 10px;
+    padding-left: 1px;
     tranisition-duration: .2s;
 }
 
+.link-row a {
+    text-decoration: none;
+}
 .link-row a:hover {
     cursor: pointer;
 }
