@@ -30,6 +30,9 @@ public class AccountDto {
     @NotNull(message = "can not be null")
     private Long balance;
 
+    @NotNull(message = "can not be null")
+    private String accountOwner;
+
     @JsonProperty("transactions")
     private Set<AccountTransactionDto> accountTransactions;
 }

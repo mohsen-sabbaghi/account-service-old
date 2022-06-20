@@ -45,7 +45,7 @@ public class AccountController {
             throws ResponseStatusException {
         if (initCredit < 0)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Initial Credit Must be grater than 0");
-        AccountDto accountDto = accountServiceInterface.createAccount(customerId, initCredit);
+        AccountDto accountDto = accountServiceInterface.createAccountForExistingCustomer(customerId, initCredit);
         URI location = URI.create("http://localhost:" + serverPort + "/v1/accounts/" + accountDto.getId());
         return ResponseEntity.created(location).body(accountDto);
     }

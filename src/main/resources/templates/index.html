@@ -4,9 +4,12 @@
     <meta charset="UTF-8">
     <title>Welcome to the Account-Service home page.</title>
     <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/5.1.3/css/bootstrap.min.css} "/>
+    <link th:rel="stylesheet" th:href="@{/css/index_styles.css} "/>
 </head>
+
 <body>
-<th:h2 class="text-center">Welcome to the Account-Service home page</th:h2>
+<div id="gradient">
+<h2 class="text-center headline">Welcome to the Account-Service home page</h2>
 <hr>
 <div class="container">
     <div class="row">
@@ -14,11 +17,25 @@
     <a href="/v1/ui/customers">Customer List</a>
     <h2>Accounts: </h2>
     <a href="/v1/ui/accounts">Account List</a>
+    <h3>Select service page: </h3>
+        <div class="link-row">
+            <a herf="/v1/ui/customers">
+                <div class="icon"></div>
+                <span>Customers List</span>
+            </a>
+        </div>         <div class="link-row">
+            <a herf="/v1/ui/accounts">
+                <div class="icon"></div>
+                <span>Accounts List</span>
+            </a>
+        </div>
+
     </div>
 </div>
-
+</div>
 <script th:src="@{/webjars/jquery/3.6.0/jquery.min.js}"></script>
 <script th:src="@{/webjars/popper.js/2.9.3/umd/popper.min.js}"></script>
 <script th:src="@{/webjars/bootstrap/5.1.3/js/bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/index_js.js}"></script>
 </body>
 </html>

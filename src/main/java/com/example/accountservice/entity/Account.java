@@ -1,8 +1,7 @@
 package com.example.accountservice.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -10,6 +9,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -17,12 +17,12 @@ import java.util.Set;
  * <a href="https://www.linkedin.com/in/sabbaghi/">...</a>
  * @version 6/8/2022
  */
-@Entity
-@Table(name = "account")
+
 @Setter
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
+@Entity
+@Table(name = "account")
 public class Account implements Serializable {
 
     @Id
@@ -35,7 +35,7 @@ public class Account implements Serializable {
 
     @NotNull
     @Column(name = "account_number", nullable = false)
-    private long accountNumber;
+    private long accountNumber = new Random().nextInt(99999999);
 
     @NotNull
     @Column(name = "balance", nullable = false)

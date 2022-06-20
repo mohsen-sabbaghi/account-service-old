@@ -38,12 +38,14 @@ public class AccountServiceInterfaceImpl implements AccountServiceInterface {
     }
 
     @Override
-    public AccountDto createAccount(long customerId, long initCredit) throws ResponseStatusException {
+    public AccountDto createAccountForExistingCustomer(long customerId, long initCredit) throws ResponseStatusException {
         Optional<Customer> customerOptional = customerRepository.findById(customerId);
         if (customerOptional.isPresent()) {
             Customer customer = customerOptional.get();
             Account account = new Account(customer);
             account.setAccountNumber(new Random().nextInt(99999999));
+            account.setCustomer(customer);//mohsen
+//            account.setAccountOwner(customer.getName()+" "+customer.getSurname());//mohsen
             if (initCredit > 0) {
                 TransactionHistory transactionHistory = new TransactionHistory(initCredit);
                 transactionHistory.setTrackNo(System.currentTimeMillis() / 1000);
@@ -54,15 +56,13 @@ public class AccountServiceInterfaceImpl implements AccountServiceInterface {
             accountRepository.save(account);
             return new ModelMapper().map(account, AccountDto.class);
         } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Customer Not Found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer Not Found");
         }
     }
 
     @Override
-    public AccountDto findById(Long id)   {
-        return accountRepository.findById(id)
-                .map(account -> new ModelMapper().map(account, AccountDto.class)).orElseThrow(
-                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account Not Found"));
+    public AccountDto findById(Long id) {
+        return accountRepository.findById(id).map(account -> new ModelMapper().map(account, AccountDto.class)).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account Not Found"));
     }
 
     @Override

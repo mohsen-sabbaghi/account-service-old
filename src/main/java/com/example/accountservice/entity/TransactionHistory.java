@@ -1,9 +1,6 @@
 package com.example.accountservice.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -16,12 +13,12 @@ import java.util.Date;
  * @version 6/8/2022
  */
 
-@Entity
-@Table(name = "account_transaction")
-@AllArgsConstructor
-@NoArgsConstructor
+
+@RequiredArgsConstructor
 @Getter
 @Setter
+@Entity
+@Table(name = "account_transaction")
 public class TransactionHistory implements Serializable {
 
     @Id

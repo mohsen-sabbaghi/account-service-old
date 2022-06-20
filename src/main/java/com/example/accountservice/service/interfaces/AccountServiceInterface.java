@@ -12,7 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
  */
 public interface AccountServiceInterface {
 
-    AccountDto createAccount(long customerId, long initCredit) throws ResponseStatusException;
+    AccountDto createAccountForExistingCustomer(long customerId, long initCredit) throws ResponseStatusException;
 
     AccountDto findById(Long id) throws ResponseStatusException;
 
