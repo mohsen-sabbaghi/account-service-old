@@ -73,20 +73,11 @@ public class CustomerController {
     }
 
     @RequestMapping("/ui/customers")
-    public String getCustomerList(Model model,Pageable pageable){
+    public String getCustomerList(Model model, Pageable pageable) {
         log.debug("#Web request for get customer");
         Page<CustomerDto> customerDtoList = customerServiceInterface.findAll(pageable);
-        System.err.println("customerDtoList.toList() "+customerDtoList.toList());
-        model.addAttribute("customerList",customerDtoList.toList());
-//        model.addAttribute("accounts",customerDtoList.get().getAccounts());
-        return "customer/list";
+        model.addAttribute("customerList", customerDtoList.toList());
+        return "customer/customer-list";
     }
-//    @RequestMapping("/ui/customers/{customer-id}")
-//    public String getCustomer(Model model, @PathVariable("customer-id") Long customerId){
-//        log.debug("#Web request for get customer with id: "+customerId);
-//        CustomerDto customerDto= customerServiceInterface.findById(customerId);
-//        model.addAttribute("customer",customerDto);
-//        model.addAttribute("accounts",customerDto.getAccounts());
-//        return "customer/list2";
-//    }
+
 }

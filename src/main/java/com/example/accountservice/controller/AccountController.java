@@ -9,6 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -21,7 +23,7 @@ import java.util.List;
  * @version 6/7/2022
  */
 
-@RestController
+@Controller
 @RequestMapping("/v1")
 @Slf4j
 public class AccountController {
@@ -35,6 +37,7 @@ public class AccountController {
 
     @PostMapping("/customers/{customer-id}/accounts")
     @PreventDuplication
+    @ResponseBody
     public ResponseEntity<AccountDto> createAccount(
             @PathVariable("customer-id") long customerId,
             @RequestHeader("Initial-Credit") long initCredit,
@@ -48,6 +51,7 @@ public class AccountController {
     }
 
     @GetMapping("/accounts/{account-id}")
+    @ResponseBody
     public ResponseEntity<AccountDto> getAccount(@PathVariable("account-id") Long id) throws ResponseStatusException {
         try {
             return ResponseEntity.ok().body(accountServiceInterface.findById(id));
@@ -57,13 +61,21 @@ public class AccountController {
     }
 
     @GetMapping("/accounts")
+    @ResponseBody
     public ResponseEntity<List<AccountDto>> getAccountList(Pageable pageable) throws ResponseStatusException {
         try {
-            Page<AccountDto> page = accountServiceInterface.findAll(pageable);
-            return ResponseEntity.ok().body(page.getContent());
+            Page<AccountDto> accountDtoList = accountServiceInterface.findAll(pageable);
+            return ResponseEntity.ok().body(accountDtoList.getContent());
         } catch (ResponseStatusException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No accounts", e.getCause());
         }
+    }
 
+    @RequestMapping("/ui/accounts")
+    public String getAccountList(Model model, Pageable pageable) {
+        log.debug("#Web request for get Account list");
+        System.err.println(getAccountList(pageable).getBody());
+        model.addAttribute("accountsList",  getAccountList(pageable).getBody());
+        return "account/account-list";
     }
 }
